@@ -19,6 +19,19 @@ The primary goal of this project was to implement a **Scalable Frontend System**
 - **GameOverModal**: A fully agnostic UI component that handles game-over states for any module within the system.
 - **Unified Score Engine**: A dynamic header in `App.js` that reads `moves` and `bestScore` from the active state regardless of which game is currently mounted.
 
+## 🛠️ Technical Stack
+* **React 18** (Functional Components & Hooks)
+* **Vite** (Optimized Build Tool)
+* **State Hooks**: `useReducer`, `useContext`, `useState`, `useEffect`
+* **Persistence**: `localStorage API` for persistent High Scores
+* **CSS3**: Native CSS focusing on Flexbox and Grid layouts
+
+## 💻 Local Setup
+1. **Clone the repository.**
+2. **Install dependencies:**
+   ```bash
+   npm install
+   npm run dev
 
 
 ## 📂 Project Structure
@@ -35,16 +48,3 @@ src/
 ├── gameRegistry.jsx        # Initial states and game configurations
 └── componentRegistry.jsx   # Mapping of IDs to React Components
 
-## 🛠️ Technical Stack
-* **React 18** (Functional Components & Hooks)
-* **Vite** (Optimized Build Tool)
-* **State Hooks**: `useReducer`, `useContext`, `useState`, `useEffect`
-* **Persistence**: `localStorage API` for persistent High Scores
-* **CSS3**: Native CSS focusing on Flexbox and Grid layouts
-
-## 💻 Local Setup
-1. **Clone the repository.**
-2. **Install dependencies:**
-   ```bash
-   npm install
-   npm run dev
