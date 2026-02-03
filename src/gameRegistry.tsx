@@ -1,7 +1,17 @@
 import { memoryReducer, memoryInitialState } from './components/MemoryGame/memoryReducer';
 import { mastermindReducer, mastermindInitialState } from './components/Mastermind/mastermindReducer';
 
-export const GAME_LOGIC = {
+interface GameConfig {
+  title: string;
+  reducer: (state: any, action: any) => any;
+  initialState: any;
+}
+
+interface GameRegistry {
+  [key: string]: GameConfig;
+}
+
+export const GAME_LOGIC: GameRegistry = {
   memory: {
     title: 'Меморија',
     reducer: memoryReducer,

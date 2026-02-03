@@ -1,12 +1,32 @@
-const baseIcons = ['🍎', '🍌', '🍇', '🍓', '🍒', '🥑', '🥦', '🥕', '🌽', '🍉'];
+interface Card {
+  id: number;
+  icon: string;
+}
 
-const generateInitialCards = () => {
+interface MemoryState {
+  cards: Card[];
+  flipped: number[];
+  matched: string[];
+  moves: number;
+  bestScore: any;
+  isGameOver: boolean;
+}
+
+type MemoryAction =
+  | { type: 'START_GAME' }
+  | { type: 'FLIP_CARD'; payload: number }
+  | { type: 'RESET_FLIPPED' }
+  | { type: 'SET_MATCHED'; payload: string };
+
+const baseIcons: string[] = ['🍎', '🍌', '🍇', '🍓', '🍒', '🥑', '🥦', '🥕', '🌽', '🍉'];
+
+const generateInitialCards = (): Card[] => {
   return [...baseIcons, ...baseIcons]
     .sort(() => Math.random() - 0.5)
     .map((icon, index) => ({ id: index, icon }));
 };
 
-export const memoryInitialState = {
+export const memoryInitialState: MemoryState = {
   cards: generateInitialCards(),
   flipped: [],
   matched: [],
@@ -15,16 +35,13 @@ export const memoryInitialState = {
   isGameOver: false
 };
 
-export function memoryReducer(state, action) {
+export function memoryReducer(state: MemoryState, action: MemoryAction): MemoryState {
   switch (action.type) {
     case 'START_GAME':
       return {
-        ...state,
+        ...memoryInitialState,
         cards: generateInitialCards(),
-        matched: [],
-        flipped: [],
-        moves: 0,
-        isGameOver: false
+        bestScore: localStorage.getItem('memoryBestScore') || null,
       };
 
     case 'FLIP_CARD':
@@ -47,9 +64,10 @@ export function memoryReducer(state, action) {
       let newBest = state.bestScore;
 
       if (isWin) {
-        if (!state.bestScore || state.moves < state.bestScore) {
+        const currentBest = state.bestScore ? parseInt(state.bestScore.toString()) : null;
+        if (!currentBest || state.moves < currentBest) {
           newBest = state.moves;
-          localStorage.setItem('memoryBestScore', newBest);
+          localStorage.setItem('memoryBestScore', newBest.toString());
         }
       }
 

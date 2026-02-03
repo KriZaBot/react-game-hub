@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react';
+import  { useState, useContext } from 'react';
 import { GAME_LOGIC } from './gameRegistry';
 import { GAME_COMPONENTS } from './componentRegistry';
 import { GameContext } from './GameContext';
@@ -7,15 +7,29 @@ import './styles/App.css';
 import './styles/Mastermind.css';
 import './styles/MemoryGame.css';
 
-function App() {
-  const { state, dispatch } = useContext(GameContext);
-  const [activeId, setActiveId] = useState(Object.keys(GAME_LOGIC)[0]);
-  const ActiveGame = GAME_COMPONENTS[activeId];
-  
-  const gameTitle = GAME_LOGIC[activeId]?.title || "Игра";
-  const activeGameState = state[activeId] || GAME_LOGIC[activeId].initialState;
+interface GameState {
+  moves: number;
+  bestScore: number | string;
+  isGameOver: boolean;
+}
 
-  const handleRestart = () => {
+function App() {
+  const context = useContext(GameContext);
+
+  if (!context) {
+    throw new Error("App must be used within a GameProvider");
+  }
+
+  const { state, dispatch } = context;
+  const [activeId, setActiveId] = useState<string>(Object.keys(GAME_LOGIC)[0]);
+  
+  const ActiveGame = GAME_COMPONENTS[activeId as keyof typeof GAME_COMPONENTS];
+  
+  const config = GAME_LOGIC[activeId as keyof typeof GAME_LOGIC];
+  const gameTitle = config?.title || "Игра";
+  const activeGameState = (state[activeId] as GameState) || config.initialState;
+
+  const handleRestart = (): void => {
     dispatch({ type: 'START_GAME', gameId: activeId });
   };
 

@@ -1,15 +1,31 @@
-import React, { useEffect, useContext } from 'react';
+import  { useContext } from 'react';
 import { GameContext } from '../../GameContext';
 import { GAME_LOGIC } from '../../gameRegistry';
 
+interface Card {
+  id: number;
+  icon: string;
+}
+
+interface MemoryState {
+  cards: Card[];
+  flipped: number[];
+  matched: string[];
+  isGameOver: boolean;
+  moves: number;
+  bestScore: number | string | null;
+}
+
 function MemoryGame() {
-  const { state, dispatch } = useContext(GameContext);
-  const memoryState = state.memory || GAME_LOGIC.memory.initialState;
+  const context = useContext(GameContext);
+  
+  if (!context) return null;
+  const { state, dispatch } = context;
+
+  const memoryState = (state.memory as MemoryState) || (GAME_LOGIC.memory.initialState as MemoryState);
   const { cards, flipped, matched } = memoryState;
 
-  
-
-  const handleCardClick = (index) => {
+  const handleCardClick = (index: number): void => {
     if (flipped.length === 2 || flipped.includes(index) || matched.includes(cards[index].icon)) return;
 
     dispatch({ type: 'FLIP_CARD', payload: index, gameId: 'memory' });

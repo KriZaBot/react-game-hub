@@ -1,4 +1,26 @@
-const generateSecretCode = () => {
+interface Attempt {
+  guess: string;
+  result: string;
+}
+
+interface MastermindState {
+  secretCode: string;
+  currentGuess: string[];
+  focusedIndex: number;
+  attempts: Attempt[];
+  moves: number;
+  bestScore: any;
+  isGameOver: boolean;
+}
+
+type MastermindAction =
+  | { type: 'START_GAME' }
+  | { type: 'SET_GUESS'; payload: { guess: string[]; nextIndex: number } }
+  | { type: 'SET_FOCUS'; payload: number }
+  | { type: 'SUBMIT_ATTEMPT'; payload: { attempt: Attempt; gameOver: boolean } }
+  | { type: 'CLEAR_GUESS' };
+
+const generateSecretCode = (): string => {
   let code = "";
   for (let i = 0; i < 4; i++) {
     code += Math.floor(Math.random() * 10).toString();
@@ -6,7 +28,7 @@ const generateSecretCode = () => {
   return code;
 };
 
-export const mastermindInitialState = {
+export const mastermindInitialState: MastermindState = {
   secretCode: generateSecretCode(),
   currentGuess: ["", "", "", ""],
   focusedIndex: 0,
@@ -16,7 +38,7 @@ export const mastermindInitialState = {
   isGameOver: false,
 };
 
-export function mastermindReducer(state, action) {
+export function mastermindReducer(state: MastermindState, action: MastermindAction): MastermindState {
   switch (action.type) {
     case 'START_GAME':
       return {
@@ -44,9 +66,10 @@ export function mastermindReducer(state, action) {
       let newBest = state.bestScore;
 
       if (won) {
-        if (!state.bestScore || newMoves < state.bestScore) {
+        const currentBest = state.bestScore ? parseInt(state.bestScore.toString()) : null;
+        if (!currentBest || newMoves < currentBest) {
           newBest = newMoves;
-          localStorage.setItem('mastermindBestScore', newBest);
+          localStorage.setItem('mastermindBestScore', newBest.toString());
         }
       }
 

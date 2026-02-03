@@ -1,7 +1,15 @@
-import React from 'react';
+
 import './GameOverModal.css';
 
-function GameOverModal({ isOpen, title, score, bestScore, onRestart }) {
+interface GameOverModalProps {
+  isOpen: boolean;
+  title: string;
+  score: string | number;
+  bestScore: string | number | null;
+  onRestart: () => void;
+}
+
+function GameOverModal({ isOpen, title, score, bestScore, onRestart }: GameOverModalProps) {
   if (!isOpen) return null;
 
   return (

@@ -1,10 +1,29 @@
-import React, { useEffect, useContext } from 'react';
+import  { useEffect, useContext } from 'react';
 import { GameContext } from '../../GameContext'; 
 import { GAME_LOGIC } from '../../gameRegistry';
 
+interface Attempt {
+  guess: string;
+  result: string;
+}
+
+interface MastermindState {
+  secretCode: string;
+  currentGuess: string[];
+  focusedIndex: number;
+  attempts: Attempt[];
+  isGameOver: boolean;
+  moves: number;
+  bestScore: number | string;
+}
+
 const Mastermind = () => {
-  const { state, dispatch } = useContext(GameContext);
-  const mastermindState = state.mastermind || GAME_LOGIC.mastermind.initialState;
+  const context = useContext(GameContext);
+  
+  if (!context) return null;
+  const { state, dispatch } = context;
+
+  const mastermindState = (state.mastermind as MastermindState) || (GAME_LOGIC.mastermind.initialState as MastermindState);
   const { secretCode, currentGuess, focusedIndex, attempts, isGameOver } = mastermindState;
 
   useEffect(() => {
@@ -13,25 +32,34 @@ const Mastermind = () => {
     }
   }, [secretCode, dispatch]);
 
-  const getFeedback = (secret, guess) => {
-    let feedback = [];
-    let sArr = secret.split("");
-    let gArr = [...guess];
+  const getFeedback = (secret: string, guess: string): string => {
+    let feedback: string[] = [];
+    let sArr: (string | null)[] = secret.split("");
+    let gArr: string[] = [...guess];
+
     for (let i = 0; i < 4; i++) {
-      if (gArr[i] === sArr[i]) { feedback.push("✅"); sArr[i] = null; gArr[i] = "done"; }
+      if (gArr[i] === sArr[i]) {
+        feedback.push("✅");
+        sArr[i] = null;
+        gArr[i] = "done";
+      }
     }
+
     for (let i = 0; i < 4; i++) {
-      if (gArr[i] !== "done" && sArr.includes(gArr[i])) { feedback.push("❌"); sArr[sArr.indexOf(gArr[i])] = null; }
+      if (gArr[i] !== "done" && sArr.includes(gArr[i])) {
+        feedback.push("❌");
+        sArr[sArr.indexOf(gArr[i])] = null;
+      }
     }
     return feedback.join("");
   };
 
-  const submitGuess = () => {
+  const submitGuess = (): void => {
     const guessStr = currentGuess.join("");
     if (guessStr.length !== 4 || !secretCode) return;
     
     const res = getFeedback(secretCode, guessStr);
-    const newAttempt = { guess: guessStr, result: res };
+    const newAttempt: Attempt = { guess: guessStr, result: res };
     
     let isWin = res === "✅✅✅✅";
     let isLoss = (attempts.length + 1) >= 10;
@@ -46,7 +74,7 @@ const Mastermind = () => {
     else if (isLoss) alert("КРАЈ! Бројот беше: " + secretCode);
   };
 
-  const handleKeypadClick = (n) => {
+  const handleKeypadClick = (n: number): void => {
     if (isGameOver) return;
     const newGuess = [...currentGuess];
     newGuess[focusedIndex] = n.toString();
@@ -66,7 +94,7 @@ const Mastermind = () => {
       <div className="main-layout">
         <div className="history-panel">
           <h3>Историја</h3>
-          {attempts.map((att, i) => (
+          {[...attempts].reverse().map((att, i) => (
             <div key={i} className="attempt-card">
               <span className="att-num">{attempts.length - i}.</span>
               <div className="mini-slots">

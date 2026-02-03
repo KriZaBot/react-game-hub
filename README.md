@@ -1,26 +1,27 @@
-# Multi-Game React Architecture
+# Multi-Game React & TypeScript Architecture
 
-This project is a demonstration of a scalable **React architecture**, focusing on advanced state management and modular system design rather than just simple game logic.
+This project is a demonstration of a scalable **React & TypeScript architecture**, focusing on strict type safety, advanced state management, and modular system design.
 
 ## 🚀 Architectural Approach
 
 The primary goal of this project was to implement a **Scalable Frontend System** where adding new features or games requires zero changes to the core application logic.
 
-### 1. Centralized State Management
-- Utilizes the **Context API** combined with **useReducer** to manage a complex, global state.
-- Each game module has its own isolated **Reducer** (`memoryReducer.jsx`, `mastermindReducer.jsx`), keeping the business logic clean and decoupled from the UI layer.
-- The global `GameContext` orchestrates these reducers, ensuring data consistency across the entire application.
+### 1. Type-Safe State Management
+- Utilizes the **Context API** with **useReducer** and **TypeScript Interfaces**.
+- Each game module has an isolated **Typed Reducer** (`memoryReducer.ts`, `mastermindReducer.ts`), ensuring strict type checking for actions and state transitions.
+- The global `GameContext` orchestrates these reducers with a unified `GameState` interface.
 
 ### 2. Registry Pattern (Dynamic Component Loading)
-- Implemented a **Registry Pattern** using `gameRegistry.js` for metadata and `componentRegistry.js` for component mapping.
-- The `App.jsx` acts as a pure orchestrator (decoupled); it does not have hardcoded references to specific games, allowing it to render any game dynamically based on the active ID.
+- Implemented a **Registry Pattern** using `gameRegistry.ts` for metadata and `componentRegistry.ts` for component mapping.
+- Uses TypeScript's `keyof typeof` to ensure the orchestrator only attempts to render valid, registered game components.
 
 ### 3. Reusable Logic & Agnostic UI
-- **GameOverModal**: A fully agnostic UI component that handles game-over states for any module within the system.
-- **Unified Score Engine**: A dynamic header in `App.js` that reads `moves` and `bestScore` from the active state regardless of which game is currently mounted.
+- **GameOverModal**: A fully typed, agnostic UI component that handles game-over states for any module.
+- **Unified Score Engine**: A dynamic header in `App.tsx` that reads `moves` and `bestScore` from the active state, leveraging TypeScript for safe property access.
 
 ## 🛠️ Technical Stack
-* **React 18** (Functional Components & Hooks)
+* **React 19**
+* **TypeScript 5**
 * **Vite** (Optimized Build Tool)
 * **State Hooks**: `useReducer`, `useContext`, `useState`, `useEffect`
 * **Persistence**: `localStorage API` for persistent High Scores
