@@ -1,33 +1,31 @@
 import React, { useEffect, useContext } from 'react';
 import { GameContext } from '../../GameContext';
+import { GAME_LOGIC } from '../../gameRegistry';
 
 function MemoryGame() {
   const { state, dispatch } = useContext(GameContext);
-  const { cards, flipped, matched } = state.memory;
+  const memoryState = state.memory || GAME_LOGIC.memory.initialState;
+  const { cards, flipped, matched } = memoryState;
 
-  useEffect(() => {
-    if (cards.length === 0) {
-      dispatch({ type: 'START_GAME' });
-    }
-  }, [cards.length, dispatch]);
+  
 
   const handleCardClick = (index) => {
     if (flipped.length === 2 || flipped.includes(index) || matched.includes(cards[index].icon)) return;
 
-    const newFlipped = [...flipped, index];
-    dispatch({ type: 'FLIP_CARD', payload: index });
+    dispatch({ type: 'FLIP_CARD', payload: index, gameId: 'memory' });
 
+    const newFlipped = [...flipped, index];
     if (newFlipped.length === 2) {
       const firstCard = cards[newFlipped[0]];
       const secondCard = cards[newFlipped[1]];
 
       if (firstCard.icon === secondCard.icon) {
         setTimeout(() => {
-          dispatch({ type: 'SET_MATCHED', payload: firstCard.icon });
+          dispatch({ type: 'SET_MATCHED', payload: firstCard.icon, gameId: 'memory' });
         }, 600);
       } else {
         setTimeout(() => {
-          dispatch({ type: 'RESET_FLIPPED' });
+          dispatch({ type: 'RESET_FLIPPED', gameId: 'memory' });
         }, 1300);
       }
     }

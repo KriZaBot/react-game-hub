@@ -1,5 +1,13 @@
+const generateSecretCode = () => {
+  let code = "";
+  for (let i = 0; i < 4; i++) {
+    code += Math.floor(Math.random() * 10).toString();
+  }
+  return code;
+};
+
 export const mastermindInitialState = {
-  secretCode: "",
+  secretCode: generateSecretCode(),
   currentGuess: ["", "", "", ""],
   focusedIndex: 0,
   attempts: [],
@@ -11,11 +19,9 @@ export const mastermindInitialState = {
 export function mastermindReducer(state, action) {
   switch (action.type) {
     case 'START_GAME':
-      let code = "";
-      for (let i = 0; i < 4; i++) code += Math.floor(Math.random() * 10).toString();
       return {
         ...mastermindInitialState,
-        secretCode: code,
+        secretCode: generateSecretCode(),
         bestScore: localStorage.getItem('mastermindBestScore') || null,
       };
 
@@ -34,7 +40,7 @@ export function mastermindReducer(state, action) {
 
     case 'SUBMIT_ATTEMPT':
       const newMoves = state.moves + 1;
-      const won = action.payload.gameOver; 
+      const won = action.payload.gameOver;
       let newBest = state.bestScore;
 
       if (won) {

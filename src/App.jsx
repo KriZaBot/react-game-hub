@@ -13,10 +13,10 @@ function App() {
   const ActiveGame = GAME_COMPONENTS[activeId];
   
   const gameTitle = GAME_LOGIC[activeId]?.title || "Игра";
-  const activeGameState = state[activeId];
+  const activeGameState = state[activeId] || GAME_LOGIC[activeId].initialState;
 
   const handleRestart = () => {
-    dispatch({ type: 'START_GAME' });
+    dispatch({ type: 'START_GAME', gameId: activeId });
   };
 
   return (

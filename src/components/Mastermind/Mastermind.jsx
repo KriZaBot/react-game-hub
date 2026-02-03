@@ -1,18 +1,18 @@
 import React, { useEffect, useContext } from 'react';
 import { GameContext } from '../../GameContext'; 
+import { GAME_LOGIC } from '../../gameRegistry';
 
 const Mastermind = () => {
   const { state, dispatch } = useContext(GameContext);
-  const { secretCode, currentGuess, focusedIndex, attempts, gameOver } = state.mastermind;
+  const mastermindState = state.mastermind || GAME_LOGIC.mastermind.initialState;
+  const { secretCode, currentGuess, focusedIndex, attempts, isGameOver } = mastermindState;
 
-  // Иницијализација само ако играта не е започната
   useEffect(() => {
     if (!secretCode) {
-      dispatch({ type: 'START_GAME' });
+      dispatch({ type: 'START_GAME', gameId: 'mastermind' });
     }
   }, [secretCode, dispatch]);
 
-  // Логика за проверка (истата твоја логика, препакувана за dispatch)
   const getFeedback = (secret, guess) => {
     let feedback = [];
     let sArr = secret.split("");
@@ -38,6 +38,7 @@ const Mastermind = () => {
 
     dispatch({ 
       type: 'SUBMIT_ATTEMPT', 
+      gameId: 'mastermind',
       payload: { attempt: newAttempt, gameOver: isWin || isLoss } 
     });
 
@@ -46,12 +47,13 @@ const Mastermind = () => {
   };
 
   const handleKeypadClick = (n) => {
-    if (gameOver) return;
+    if (isGameOver) return;
     const newGuess = [...currentGuess];
     newGuess[focusedIndex] = n.toString();
     
     dispatch({ 
       type: 'SET_GUESS', 
+      gameId: 'mastermind',
       payload: { 
         guess: newGuess, 
         nextIndex: focusedIndex < 3 ? focusedIndex + 1 : focusedIndex 
@@ -61,9 +63,6 @@ const Mastermind = () => {
 
   return (
     <div className="master-wrapper">
-   
-     
-      
       <div className="main-layout">
         <div className="history-panel">
           <h3>Историја</h3>
@@ -71,7 +70,7 @@ const Mastermind = () => {
             <div key={i} className="attempt-card">
               <span className="att-num">{attempts.length - i}.</span>
               <div className="mini-slots">
-                {att.guess.split("").map((n, j) => <div key={j} className="mini-slot">{n}</div>)}
+                {att.guess.split("").map((num, j) => <div key={j} className="mini-slot">{num}</div>)}
               </div>
               <div className="att-result-tag">{att.result}</div>
             </div>
@@ -84,19 +83,19 @@ const Mastermind = () => {
               <div 
                 key={i} 
                 className={`slot ${focusedIndex === i ? 'current-focus' : ''} ${currentGuess[i] ? 'has-value' : ''}`}
-                onClick={() => dispatch({ type: 'SET_FOCUS', payload: i })}
+                onClick={() => dispatch({ type: 'SET_FOCUS', payload: i, gameId: 'mastermind' })}
               >
                 {currentGuess[i]}
               </div>
             ))}
           </div>
-          <button className="ok-btn" onClick={submitGuess} disabled={currentGuess.includes("") || gameOver}>ПРОВЕРИ</button>
+          <button className="ok-btn" onClick={submitGuess} disabled={currentGuess.includes("") || isGameOver}>ПРОВЕРИ</button>
           
           <div className="keypad">
             {[1, 2, 3, 4, 5, 6, 7, 8, 9, 0].map(n => (
               <button key={n} onClick={() => handleKeypadClick(n)}>{n}</button>
             ))}
-            <button className="clear-btn" onClick={() => dispatch({ type: 'CLEAR_GUESS' })}>C</button>
+            <button className="clear-btn" onClick={() => dispatch({ type: 'CLEAR_GUESS', gameId: 'mastermind' })}>C</button>
           </div>
         </div>
       </div>

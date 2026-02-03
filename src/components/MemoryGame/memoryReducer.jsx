@@ -1,5 +1,13 @@
+const baseIcons = ['🍎', '🍌', '🍇', '🍓', '🍒', '🥑', '🥦', '🥕', '🌽', '🍉'];
+
+const generateInitialCards = () => {
+  return [...baseIcons, ...baseIcons]
+    .sort(() => Math.random() - 0.5)
+    .map((icon, index) => ({ id: index, icon }));
+};
+
 export const memoryInitialState = {
-  cards: [],
+  cards: generateInitialCards(),
   flipped: [],
   matched: [],
   moves: 0,
@@ -7,17 +15,12 @@ export const memoryInitialState = {
   isGameOver: false
 };
 
-const baseIcons = ['🍎', '🍌', '🍇', '🍓', '🍒', '🥑', '🥦', '🥕', '🌽', '🍉'];
-
 export function memoryReducer(state, action) {
   switch (action.type) {
     case 'START_GAME':
-      const shuffled = [...baseIcons, ...baseIcons]
-        .sort(() => Math.random() - 0.5)
-        .map((icon, index) => ({ id: index, icon }));
       return {
         ...state,
-        cards: shuffled,
+        cards: generateInitialCards(),
         matched: [],
         flipped: [],
         moves: 0,
